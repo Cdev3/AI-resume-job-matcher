@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard | AI Resume Matcher{% endblock %}
+
+{% block content %}
+<section class="dashboard-container py-5">
+    <div class="container">
+        <!-- Dashboard Header -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 pb-3 border-bottom border-secondary-subtle gap-3">
+            <div>
+                <span class="badge bg-info-subtle text-info border border-info-subtle mb-2">Analytics & History</span>
+                <h2 class="text-white fw-bold mb-1">Resume Performance Dashboard</h2>
+                <p class="text-secondary mb-0">Track match statistics, identify recurring skill gaps, and manage past candidate scans.</p>
+            </div>
+            <div>
+                <a href="{{ url_for('index') }}" class="btn btn-primary-gradient rounded-pill px-4">
+                    <i class="fa-solid fa-plus me-1"></i> New Analysis
+                </a>
+            </div>
+        </div>
+
+        <!-- 6 Aggregate Metrics Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="glass-card p-3 rounded-4 text-center">
+                    <div class="small text-secondary mb-1">Total Scans</div>
+                    <div class="fs-3 fw-bold text-white">{{ stats.total_analyses }}</div>
+                    <div class="text-secondary" style="font-size: 0.75rem;">Resumes Analyzed</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="glass-card p-3 rounded-4 text-center">
+                    <div class="small text-secondary mb-1">Avg Score</div>
+                    <div class="fs-3 fw-bold text-info">{{ stats.avg_score }}%</div>
+                    <div class="text-secondary" style="font-size: 0.75rem;">Match Average</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="glass-card p-3 rounded-4 text-center">
+                    <div class="small text-secondary mb-1">Peak Score</div>
+                    <div class="fs-3 fw-bold text-success">{{ stats.highest_score }}%</div>
+                    <div class="text-secondary" style="font-size: 0.75rem;">Top Alignment</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="glass-card p-3 rounded-4 text-center">
+                    <div class="small text-secondary mb-1">Min Score</div>
+                    <div class="fs-3 fw-bold text-danger">{{ stats.lowest_score }}%</div>
+                    <div class="text-secondary" style="font-size: 0.75rem;">Lowest Match</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="glass-card p-3 rounded-4 text-center">
+                    <div class="small text-secondary mb-1">High Fit (≥70%)</div>
+                    <div class="fs-3 fw-bold text-success">{{ stats.above_70 }}</div>
+                    <div class="text-secondary" style="font-size: 0.75rem;">Interview Ready</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="glass-card p-3 rounded-4 text-center">
+                    <div class="small text-secondary mb-1">Gapped (<50%)</div>
+                    <div class="fs-3 fw-bold text-warning">{{ stats.below_50 }}</div>
+                    <div class="text-secondary" style="font-size: 0.75rem;">Needs Upskilling</div>
+                </div>
+            </div>
+        </div>
+
+        {% if analyses %}
+        <!-- Charts Row -->
+        <div class="row g-4 mb-4">
+            <!-- Line Chart: Score Timeline -->
+            <div class="col-lg-8">
+                <div class="glass-card p-4 rounded-4 h-100">
+                    <h6 class="text-white fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-info"></i> Candidate Match Score Trends
+                    </h6>
+                    <div style="height: 280px;">
+                        <canvas id="scoreTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doughnut Chart: Distribution -->
+            <div class="col-lg-4">
+                <div class="glass-card p-4 rounded-4 h-100">
+                    <h6 class="text-white fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-warning"></i> Fit Distribution
+                    </h6>
+                    <div style="height: 280px;">
+                        <canvas id="scoreDistChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="glass-card p-4 rounded-4">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary-subtle">
+                <h5 class="text-white mb-0 d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-primary"></i> Scan History & Saved Records
+                </h5>
+                <span class="badge bg-secondary-subtle text-secondary">{{ analyses|length }} Total Records</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table custom-dark-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Target Role</th>
+                            <th>Match Score</th>
+                            <th>Matched</th>
+                            <th>Missing Gaps</th>
+                            <th>Date Scanned</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in analyses %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar-circle">
+                                        {{ a.candidate_name[0]|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="text-white fw-semibold small">{{ a.candidate_name }}</div>
+                                        <div class="text-secondary" style="font-size: 0.75rem;">{{ a.resume_filename }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-dark border border-secondary text-light small">
+                                    {{ a.job_title }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if a.match_score >= 70 %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">
+                                        {{ a.match_score }}% High Fit
+                                    </span>
+                                {% elif a.match_score >= 50 %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 rounded-pill">
+                                        {{ a.match_score }}% Medium
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 rounded-pill">
+                                        {{ a.match_score }}% Gaps
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="text-success small fw-semibold">
+                                    <i class="fa-solid fa-check me-1"></i> {{ a.matched_skills|length }} skills
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-danger small fw-semibold">
+                                    <i class="fa-solid fa-xmark me-1"></i> {{ a.missing_skills|length }} missing
+                                </span>
+                            </td>
+                            <td class="text-secondary small">
+                                {{ a.created_at }}
+                            </td>
+                            <td class="text-end">
+                                <form action="{{ url_for('delete_analysis', analysis_id=a.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this analysis record?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle" title="Delete record">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="glass-card p-5 rounded-4 text-center">
+            <div class="empty-icon-circle mx-auto mb-3">
+                <i class="fa-solid fa-inbox text-secondary fs-1"></i>
+            </div>
+            <h4 class="text-white fw-bold mb-2">No Resume Analyses Yet</h4>
+            <p class="text-secondary mb-4">Start by scanning your first resume against a job description to populate your dashboard.</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary-gradient rounded-pill px-4 py-2">
+                <i class="fa-solid fa-bolt me-2"></i> Scan First Resume
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% if analyses %}
+<script>
+    // Trends line chart
+    const rawAnalyses = {{ analyses|tojson }};
+    const reversed = [...rawAnalyses].reverse();
+    
+    const trendLabels = reversed.map((item, idx) => item.candidate_name ? item.candidate_name.split(' ')[0] : `#${idx+1}`);
+    const trendData = reversed.map(item => item.match_score);
+
+    const trendCtx = document.getElementById('scoreTrendChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: trendLabels,
+            datasets: [{
+                label: 'Match Score %',
+                data: trendData,
+                borderColor: '#38bdf8',
+                backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                fill: true,
+                tension: 0.35,
+                pointBackgroundColor: '#38bdf8',
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    ticks: { color: '#94a3b8' },
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                },
+                y: {
+                    min: 0,
+                    max: 100,
+                    ticks: { color: '#94a3b8' },
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                }
+            },
+            plugins: {
+                legend: { labels: { color: '#e2e8f0' } }
+            }
+        }
+    });
+
+    // Score distribution chart
+    const above70 = {{ stats.above_70 }};
+    const below50 = {{ stats.below_50 }};
+    const mid5070 = rawAnalyses.length - above70 - below50;
+
+    const distCtx = document.getElementById('scoreDistChart').getContext('2d');
+    new Chart(distCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Strong Fit (≥70%)', 'Moderate (50-69%)', 'Gaps (<50%)'],
+            datasets: [{
+                data: [above70, Math.max(0, mid5070), below50],
+                backgroundColor: [
+                    'rgba(16, 185, 129, 0.85)',
+                    'rgba(245, 158, 11, 0.85)',
+                    'rgba(239, 68, 68, 0.85)'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#e2e8f0', padding: 15 }
+                }
+            }
+        }
+    });
+</script>
+{% endif %}
+{% endblock %}

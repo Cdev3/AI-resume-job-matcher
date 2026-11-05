@@ -1,0 +1,30 @@
+David Miller
+Email: david.miller@example.com | Phone: (555) 789-0123 | Location: San Francisco, CA
+LinkedIn: linkedin.com/in/david-miller | GitHub: github.com/davidmiller-code
+
+PROFESSIONAL SUMMARY
+Versatile Full-Stack Software Engineer with 5+ years of experience designing scalable web architectures and RESTful microservices. Proficient in Python, JavaScript/TypeScript, Flask, React, and relational database systems (MySQL, PostgreSQL). Proven track record of improving API response times and leading Agile sprint cycles.
+
+TECHNICAL SKILLS
+- Programming Languages: Python, JavaScript, TypeScript, SQL, Bash
+- Frameworks & Libraries: Flask, Django, React, Express, Node.js, HTML5, CSS3, Bootstrap, Tailwind
+- Databases & Caching: MySQL, PostgreSQL, MongoDB, Redis
+- Cloud & DevOps: Docker, Linux, Git, GitHub Actions, AWS (EC2, S3), CI/CD
+- Testing & Methodologies: Pytest, Jest, Unit Testing, Agile, Scrum, TDD
+- Soft Skills: Leadership, Problem Solving, Communication, Mentoring
+
+PROFESSIONAL EXPERIENCE
+Senior Software Engineer | Apex Digital Labs (2022 - Present)
+- Engineered high-throughput Flask and React web applications serving 1M+ active monthly users.
+- Designed and optimized MySQL database schemas with indexing and query tuning, cutting latency by 45%.
+- Implemented CI/CD pipelines using GitHub Actions and containerized microservices using Docker.
+- Spearheaded sprint planning, architectural design reviews, and junior engineer mentorship.
+
+Software Developer | CloudPoint Systems (2019 - 2022)
+- Built automated RESTful APIs in Python and integrated third-party payment gateways.
+- Developed interactive responsive web dashboards with React, HTML, and CSS.
+- Participated in daily Agile standups and conducted rigorous unit testing with Pytest.
+
+EDUCATION
+Bachelor of Science in Computer Science
+State University (2015 - 2019)

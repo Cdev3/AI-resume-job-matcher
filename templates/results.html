@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results | AI Resume Matcher{% endblock %}
+
+{% block content %}
+<section class="results-container py-5">
+    <div class="container">
+        <!-- Top Bar -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 pb-3 border-bottom border-secondary-subtle gap-3">
+            <div>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-2">Scan Completed</span>
+                <h2 class="text-white fw-bold mb-1">{{ result.candidate_name }}</h2>
+                <p class="text-secondary mb-0">
+                    <i class="fa-solid fa-briefcase me-1 text-info"></i> {{ result.job_title }}
+                    <span class="mx-2 text-secondary">•</span>
+                    <i class="fa-solid fa-file-lines me-1 text-secondary"></i> {{ result.resume_filename }}
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-light rounded-pill px-3">
+                    <i class="fa-solid fa-arrow-left me-1"></i> New Scan
+                </a>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-glass rounded-pill px-3">
+                    <i class="fa-solid fa-chart-pie me-1 text-info"></i> Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Score & KPI Cards Row -->
+        <div class="row g-4 mb-4">
+            <!-- Score Gauge Card -->
+            <div class="col-lg-4">
+                <div class="glass-card p-4 rounded-4 text-center h-100 d-flex flex-column justify-content-center">
+                    <h6 class="text-secondary text-uppercase fw-semibold mb-3">Overall Match Score</h6>
+                    <div class="score-circle-wrapper mx-auto mb-3">
+                        <svg class="score-svg" viewBox="0 0 160 160">
+                            <circle class="score-bg" cx="80" cy="80" r="70" />
+                            <circle class="score-fill" id="scoreBar" cx="80" cy="80" r="70" stroke-dasharray="440" stroke-dashoffset="440" />
+                        </svg>
+                        <div class="score-inner-text">
+                            <span class="score-number" id="scoreDisplay">0</span>
+                            <span class="score-unit">%</span>
+                        </div>
+                    </div>
+                    <div>
+                        {% if result.match_score >= 80 %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fs-6">
+                                <i class="fa-solid fa-circle-check me-1"></i> Excellent Match
+                            </span>
+                        {% elif result.match_score >= 60 %}
+                            <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-2 rounded-pill fs-6">
+                                <i class="fa-solid fa-circle-check me-1"></i> Competitive Match
+                            </span>
+                        {% elif result.match_score >= 40 %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2 rounded-pill fs-6">
+                                <i class="fa-solid fa-triangle-exclamation me-1"></i> Moderate Gaps
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fs-6">
+                                <i class="fa-solid fa-circle-xmark me-1"></i> Significant Gaps
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Quick Stats -->
+            <div class="col-lg-8">
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6 col-md-3">
+                        <div class="glass-card p-3 rounded-4 text-center">
+                            <div class="stat-icon-badge bg-primary-subtle text-primary mb-2 mx-auto">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
+                            <div class="fs-3 fw-bold text-white">{{ result.total_jd_skills }}</div>
+                            <div class="small text-secondary">Required Skills</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="glass-card p-3 rounded-4 text-center">
+                            <div class="stat-icon-badge bg-success-subtle text-success mb-2 mx-auto">
+                                <i class="fa-solid fa-check-double"></i>
+                            </div>
+                            <div class="fs-3 fw-bold text-success">{{ result.total_matched }}</div>
+                            <div class="small text-secondary">Matched Skills</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="glass-card p-3 rounded-4 text-center">
+                            <div class="stat-icon-badge bg-danger-subtle text-danger mb-2 mx-auto">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <div class="fs-3 fw-bold text-danger">{{ result.total_missing }}</div>
+                            <div class="small text-secondary">Missing Gaps</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <div class="glass-card p-3 rounded-4 text-center">
+                            <div class="stat-icon-badge bg-info-subtle text-info mb-2 mx-auto">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+                            <div class="fs-3 fw-bold text-info">{{ result.extra_skills|length }}</div>
+                            <div class="small text-secondary">Bonus Skills</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendations Card -->
+                <div class="glass-card p-4 rounded-4">
+                    <h6 class="text-white fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-warning"></i> AI Actionable Recommendations
+                    </h6>
+                    <div class="d-flex flex-column gap-2">
+                        {% for rec in result.recommendations %}
+                            <div class="rec-item p-3 rounded-3 border border-secondary-subtle">
+                                <div class="d-flex align-items-start gap-2">
+                                    <i class="fa-solid {{ rec.icon }} mt-1 text-warning"></i>
+                                    <div>
+                                        <div class="text-white fw-semibold small">{{ rec.title }}</div>
+                                        <div class="text-secondary small">{{ rec.message }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Skill Comparison Columns -->
+        <div class="row g-4 mb-4">
+            <!-- Column 1: Matched Skills -->
+            <div class="col-lg-6">
+                <div class="glass-card p-4 rounded-4 h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary-subtle">
+                        <h5 class="text-white mb-0 d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-success"></i> Matched Skills ({{ result.total_matched }})
+                        </h5>
+                        <span class="badge bg-success-subtle text-success">Found in Resume</span>
+                    </div>
+
+                    {% if result.matched_by_cat %}
+                        {% for category, skills in result.matched_by_cat.items() %}
+                            <div class="skill-category-block mb-3">
+                                <div class="small text-secondary fw-semibold text-uppercase mb-2">{{ category }}</div>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for skill in skills %}
+                                        <span class="skill-badge matched">
+                                            <i class="fa-solid fa-check me-1"></i> {{ skill }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4 text-secondary">
+                            <i class="fa-solid fa-circle-exclamation fs-3 mb-2"></i>
+                            <p class="small mb-0">No direct skill matches detected against requirements.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Column 2: Missing Skills -->
+            <div class="col-lg-6">
+                <div class="glass-card p-4 rounded-4 h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary-subtle">
+                        <h5 class="text-white mb-0 d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-circle-xmark text-danger"></i> Missing Skills / Gaps ({{ result.total_missing }})
+                        </h5>
+                        <span class="badge bg-danger-subtle text-danger">Required in Job</span>
+                    </div>
+
+                    {% if result.missing_by_cat %}
+                        {% for category, skills in result.missing_by_cat.items() %}
+                            <div class="skill-category-block mb-3">
+                                <div class="small text-secondary fw-semibold text-uppercase mb-2">{{ category }}</div>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for skill in skills %}
+                                        <span class="skill-badge missing">
+                                            <i class="fa-solid fa-xmark me-1"></i> {{ skill }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4 text-success">
+                            <i class="fa-solid fa-award fs-2 mb-2"></i>
+                            <p class="small mb-0 fw-bold">Zero skill gaps! You meet 100% of the recognized job requirements.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Bonus Extra Skills -->
+        {% if result.extra_skills %}
+        <div class="glass-card p-4 rounded-4 mb-4">
+            <h6 class="text-white fw-bold mb-2 d-flex align-items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-info"></i> Bonus Skills on Candidate's Resume ({{ result.extra_skills|length }})
+            </h6>
+            <p class="text-secondary small mb-3">These skills exist on your resume and show breadth, but were not strictly required in the job posting.</p>
+            <div class="d-flex flex-wrap gap-2">
+                {% for skill in result.extra_skills %}
+                    <span class="skill-badge extra">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Visual Analytics Chart -->
+        <div class="glass-card p-4 rounded-4">
+            <h6 class="text-white fw-bold mb-3 d-flex align-items-center gap-2">
+                <i class="fa-solid fa-chart-column text-primary"></i> Category Match vs Missing Breakdown
+            </h6>
+            <div style="height: 320px;">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animate circular gauge
+    const targetScore = {{ result.match_score }};
+    const maxDash = 440;
+    const scoreBar = document.getElementById('scoreBar');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+
+    // Color gradient based on score
+    if (targetScore >= 80) {
+        scoreBar.style.stroke = '#10b981'; // Emerald Green
+    } else if (targetScore >= 60) {
+        scoreBar.style.stroke = '#38bdf8'; // Sky Blue
+    } else if (targetScore >= 40) {
+        scoreBar.style.stroke = '#f59e0b'; // Amber
+    } else {
+        scoreBar.style.stroke = '#ef4444'; // Red
+    }
+
+    setTimeout(() => {
+        const offset = maxDash - (targetScore / 100 * maxDash);
+        scoreBar.style.strokeDashoffset = offset;
+    }, 200);
+
+    // Number count-up animation
+    let count = 0;
+    const step = targetScore / 40;
+    const counter = setInterval(() => {
+        count += step;
+        if (count >= targetScore) {
+            scoreDisplay.textContent = targetScore;
+            clearInterval(counter);
+        } else {
+            scoreDisplay.textContent = count.toFixed(1);
+        }
+    }, 25);
+
+    // Category Chart
+    const matchedCategories = {{ result.matched_by_cat|tojson }};
+    const missingCategories = {{ result.missing_by_cat|tojson }};
+
+    const allCatKeys = Array.from(new Set([
+        ...Object.keys(matchedCategories),
+        ...Object.keys(missingCategories)
+    ]));
+
+    const matchedCounts = allCatKeys.map(k => (matchedCategories[k] || []).length);
+    const missingCounts = allCatKeys.map(k => (missingCategories[k] || []).length);
+
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: allCatKeys,
+            datasets: [
+                {
+                    label: 'Matched Skills',
+                    data: matchedCounts,
+                    backgroundColor: 'rgba(16, 185, 129, 0.85)',
+                    borderRadius: 6
+                },
+                {
+                    label: 'Missing Gaps',
+                    data: missingCounts,
+                    backgroundColor: 'rgba(239, 68, 68, 0.85)',
+                    borderRadius: 6
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    ticks: { color: '#94a3b8' },
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#94a3b8', stepSize: 1 },
+                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: { color: '#e2e8f0' }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

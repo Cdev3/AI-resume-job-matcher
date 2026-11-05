@@ -1,0 +1,23 @@
+Role: Lead Python & Full Stack Engineer
+Company: Horizon Cloud Technologies
+Location: Hybrid / Remote
+
+About The Role:
+We are seeking an experienced Lead Python Full Stack Engineer to spearhead our core analytics platform. You will design, build, and deploy high-volume distributed microservices, collaborate with frontend teams, and maintain cloud infrastructure.
+
+Key Responsibilities:
+- Design and implement scalable backend services utilizing Python, Flask, or FastAPI.
+- Build clean, interactive client applications using React, HTML5, CSS3, and modern JavaScript.
+- Maintain and optimize relational database models in MySQL or PostgreSQL.
+- Implement containerization and deployment pipelines with Docker, Kubernetes, and AWS services.
+- Lead code reviews, champion automated testing with Pytest, and maintain high standards of code hygiene.
+- Work closely with product managers and engineers in an Agile / Scrum framework.
+
+Required Qualifications & Skills:
+- 4+ years of professional software development experience in Python.
+- Strong proficiency with Flask, Django, or FastAPI web frameworks.
+- Demonstrated experience with MySQL, PostgreSQL, and Redis caching.
+- Familiarity with cloud technologies including AWS, Docker, Kubernetes, and CI/CD pipelines.
+- Modern frontend experience with React, JavaScript, HTML, and CSS.
+- Familiarity with Git version control and Linux environments.
+- Strong problem-solving, communication, and leadership skills.
