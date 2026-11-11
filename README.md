@@ -17,7 +17,7 @@ An intelligent, full-stack application that extracts textual content from resume
 
 ---
 
-## 📌 Resume Bullet Points (Copy & Paste to Resume)
+## 📌 Resume Bullet Points
 
 If you are showcasing this project on your software engineering resume, here are pre-crafted, high-impact bullet points:
 
@@ -216,3 +216,4 @@ pytest tests/ -v
 ## 📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+ 
