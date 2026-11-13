@@ -2,30 +2,44 @@
 
 # ⚡ AI Resume & Job Description Matcher
 
-An intelligent, full-stack application that extracts textual content from resumes (PDF, DOCX, TXT), evaluates them against job descriptions via keyword-based NLP matching, computes match percentages, highlights critical skill gaps, and delivers actionable career recommendations through an interactive dashboard.
+An intelligent Python Flask-based web application that analyzes resumes against job descriptions to identify skill compatibility, calculate matching scores, and highlight missing technical skills.
 
-[![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-3.0.0-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
-[![JavaScript](https://img.shields.io/badge/JavaScript-ES6%2B-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/)
-[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/)
-[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+The application extracts text from PDF, DOCX, and TXT resumes, applies rule-based NLP techniques for skill identification, and generates actionable skill-gap insights through an interactive analytics dashboard.
 
-</div>
+Built to help job seekers understand how closely their qualifications align with specific job requirements.
 
 ---
 
-## 📌 Resume Bullet Points
+## 🧠 Matching Algorithm
 
-If you are showcasing this project on your software engineering resume, here are pre-crafted, high-impact bullet points:
+The application uses rule-based keyword matching
+to compare extracted resume skills with job
+description requirements.
 
-- **AI Resume & Job Description Matcher** | *Python, Flask, MySQL, HTML, CSS, JavaScript*
-  - Developed a full-stack web application to parse resumes (PDF, DOCX, TXT) and benchmark qualifications against job descriptions using automated NLP keyword extraction.
-  - Built an intelligent skill gap analysis engine mapping 300+ skills across 10 technical categories, computing match percentages and delivering strategic upskilling recommendations.
-  - Designed an interactive analytics dashboard featuring Chart.js visual breakdowns, score trends, and MySQL persistence with automated zero-configuration database fallback.
-  - Engineered RESTful API endpoints for headless document evaluation and integrated responsive glassmorphic UI using Bootstrap 5 and vanilla JavaScript.
+### Processing Steps
+
+1. Extract text from the uploaded resume.
+2. Normalize the extracted text.
+3. Identify technical skills using a predefined
+   skill database.
+4. Extract required skills from the job description.
+5. Compare the two skill sets.
+6. Calculate the matching percentage.
+7. Identify missing skills.
+
+### Matching Formula
+
+Match Percentage =
+
+(Common Skills / Total Required Skills) * 100
+
+### Skill Gap Analysis
+
+Missing Skills =
+
+Required Skills - Resume Skills
+
+
 
 ---
 
