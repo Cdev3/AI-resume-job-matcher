@@ -84,35 +84,48 @@ flowchart TD
 ## 📂 Project Structure
 
 ```
-resume_matcher/
-├── app.py                      # Flask Application Server & Routes
-├── matcher.py                  # Core NLP, Skill Extraction & Match Pipeline
-├── db.py                       # Database Layer (MySQL + SQLite Fallback)
-├── config.py                   # Configuration & Environment Variables
-├── requirements.txt            # Python Dependencies
-├── schema.sql                  # MySQL Database DDL & Seed Data
-├── .env.example                # Sample Environment Variables
-├── .gitignore                  # Git Ignore Configuration
-├── README.md                   # Complete Documentation
-├── LICENSE                     # MIT License
+AI-resume-job-matcher/
+│
+├── README.md
+├── LICENSE
+├── requirements.txt
+├── .env.example
+├── .gitignore
+│
+├── app.py
+├── config.py
+│
+├── backend/
+│   ├── __init__.py
+│   ├── matcher.py
+│   ├── db.py
+│   └── ...
+│
 ├── templates/
-│   ├── base.html               # Common Layout, Navbar & Footer
-│   ├── index.html              # Main Landing, File Upload & Text Form
-│   ├── results.html            # Scan Results, Match Gauge & Gap Breakdown
-│   └── dashboard.html          # Historical Analytics & Score Distribution
+│   ├── base.html
+│   ├── index.html
+│   ├── results.html
+│   └── dashboard.html
+│
 ├── static/
 │   ├── css/
-│   │   └── style.css           # Glassmorphism, Dark UI & Custom Components
-│   └── js/
-│       └── main.js             # Client Interactivity & Validation
+│   ├── js/
+│   └── images/
+│
+├── database/
+│   └── schema.sql
+│
 ├── samples/
-│   ├── sample_resume.txt       # Ready-to-test Demo Resume
-│   └── sample_job_description.txt # Ready-to-test Demo Job Description
+│   ├── sample_resume.txt
+│   └── sample_job_description.txt
+│
 ├── tests/
-│   └── test_matcher.py         # Pytest Unit Tests for Matching Logic
-└── uploads/                    # Temporary Storage for File Processing
-```
-
+│   └── test_matcher.py
+│
+└── screenshots/
+    ├── home.png
+    ├── results.png
+    └── dashboard.png
 ---
 
 ## 💻 Tech Stack Breakdown
